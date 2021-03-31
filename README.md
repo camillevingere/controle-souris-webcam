@@ -25,7 +25,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/camille/controle-souris-webcam">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="300" height="109">
   </a>
 
   <h3 align="center">Contrôle souris webcam</h3>
