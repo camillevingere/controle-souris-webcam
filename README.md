@@ -90,7 +90,7 @@ Polytech’Lille, SE4, IHM
 Le but de ce TP est de mettre en place une petite application permettant de
 controler de curseur avec l’orientation de la tête.
 
-### Build with
+### Réalisé avec
 
 Ce projet a été réalisé avec les technologies suivantes
 
