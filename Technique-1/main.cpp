@@ -1,0 +1,109 @@
+#include <opencv2/opencv.hpp>
+#include <opencv2/face.hpp>
+#include "opencv2/objdetect.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/videoio.hpp"
+#include <X11/Xlib.h>
+#include <iostream>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+using namespace std;
+using namespace cv;
+
+void detectAndDisplay(Mat frame, Display *dpy, Window root_window);
+
+/** Global variables */
+String face_cascade_name = "haarcascade_frontalface_alt.xml";
+String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
+CascadeClassifier face_cascade;
+CascadeClassifier eyes_cascade;
+
+/** @function detectAndDisplay */
+void detectAndDisplay(Mat frame, Display *dpy, Window root_window)
+{
+    Mat frame_gray;
+    cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    equalizeHist(frame_gray, frame_gray);
+    //-- Detect faces
+    std::vector<Rect> faces;
+    face_cascade.detectMultiScale(frame_gray, faces);
+    for (size_t i = 0; i < faces.size(); i++)
+    {
+        Point center(faces[i].x + faces[i].width / 2, faces[i].y + faces[i].height / 2);
+        ellipse(frame, center, Size(faces[i].width / 2, faces[i].height / 2), 0, 0, 360, Scalar(255, 0, 255), 4);
+        Mat faceROI = frame_gray(faces[i]);
+        //-- In each face, detect eyes
+        std::vector<Rect> eyes;
+        eyes_cascade.detectMultiScale(faceROI, eyes);
+        for (size_t j = 0; j < eyes.size(); j++)
+        {
+            Point eye_center(faces[i].x + eyes[j].x + eyes[j].width / 2, faces[i].y + eyes[j].y + eyes[j].height / 2);
+            int radius = cvRound((eyes[j].width + eyes[j].height) * 0.25);
+            circle(frame, eye_center, radius, Scalar(255, 0, 0), 4);
+            //Mettre à jour le curseur
+            XWarpPointer(dpy, None, root_window, 0, 0, 0, 0, faces[i].x, faces[i].y);
+            printf("Gauche: %d Droite: %d\n", faces[i].x, faces[i].y);
+            XFlush(dpy);
+            usleep(500);
+        }
+    }
+    //-- Show what you got
+    imshow("Capture - Face detection", frame);
+}
+
+int main(int argc, const char **argv)
+{
+    CommandLineParser parser(argc, argv,
+                             "{help h||}"
+                             "{face_cascade|data/haarcascades/haarcascade_frontalface_alt.xml|Path to face cascade.}"
+                             "{eyes_cascade|data/haarcascades/haarcascade_eye_tree_eyeglasses.xml|Path to eyes cascade.}"
+                             "{camera|0|Camera device number.}");
+    parser.about("\nThis program demonstrates using the cv::CascadeClassifier class to detect objects (Face + eyes) in a video stream.\n"
+                 "You can use Haar or LBP features.\n\n");
+    parser.printMessage();
+
+    //Choisir l'ecran
+    Display *dpy = XOpenDisplay(0);
+    int scr = XDefaultScreen(dpy);
+    Window root_window = XRootWindow(dpy, scr);
+
+    //-- 1. Load the cascades
+    if (!face_cascade.load(face_cascade_name))
+    {
+        cout << "--(!)Error loading face cascade\n";
+        return -1;
+    };
+    if (!eyes_cascade.load(eyes_cascade_name))
+    {
+        cout << "--(!)Error loading eyes cascade\n";
+        return -1;
+    };
+    int camera_device = parser.get<int>("camera");
+    VideoCapture capture;
+    //-- 2. Read the video stream
+    capture.open(camera_device);
+    if (!capture.isOpened())
+    {
+        cout << "--(!)Error opening video capture\n";
+        return -1;
+    }
+    Mat frame;
+    while (capture.read(frame))
+    {
+        if (frame.empty())
+        {
+            cout << "--(!) No captured frame -- Break!\n";
+            break;
+        }
+        //-- 3. Apply the classifier to the frame
+        detectAndDisplay(frame, dpy, root_window);
+        if (waitKey(10) == 27)
+        {
+            break; // escape
+        }
+    }
+    return 0;
+}
