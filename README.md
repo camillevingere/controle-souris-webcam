@@ -49,24 +49,35 @@
   <summary>Table des matières</summary>
   <ol>
     <li>
-      <a href="#about-the-project">Le projet</a>
+      <a href="#le-projet">Le projet</a>
       <ul>
-        <li><a href="#built-with">Réalisé avec</a></li>
+        <li><a href="#réalisé-avec">Réalisé avec</a></li>
       </ul>
     </li>
     <li>
-      <a href="#getting-started">Pour commencer</a>
+      <a href="#pour-commencer">Pour commencer</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#prérequis">Prérequis</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
+        <li>
+      <a href="#recherche-de-solution">Recherche de solution</a>
+      <ul>
+        <li><a href="#manette">Manette</a></li>
+        <li><a href="#limites">Limites</a></li>
+        <li><a href="#pave-tactile">Pavé tactile</a></li>
+      </ul>
+    </li>
+            <li>
+      <a href="#calcul-de-l-orientation-de-la-tête">Calcul de l'orientation de la tête</a>
+      <ul>
+        <li><a href="#technique-n-1">Technique n°1</a></li>
+        <li><a href="#technique-n-2">Technique n°2</a></li>
+        <li><a href="#technique-n-2">Technique n°3</a></li>
+      </ul>
+    </li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
@@ -79,7 +90,7 @@ Polytech’Lille, SE4, IHM
 Le but de ce TP est de mettre en place une petite application permettant de
 controler de curseur avec l’orientation de la tête.
 
-### Réalisé avec
+### Build with
 
 Ce projet a été réalisé avec les technologies suivantes
 
@@ -95,7 +106,7 @@ Il est nécéssaire d'installer la bibliothèque d'OpenCV version 4.2.
 
 ### Pré-requis
 
-This is an example of how to list things you need to use the software and how to install them.
+Vous pouvez les installer comme ceci.
 
 - OpenCV
   ```sh
@@ -108,7 +119,7 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-1. Clone the repo
+1. Cloner le dépôt
    ```sh
    git clone https://github.com/camillevingere/controle-souris-webcam.git
    ```
@@ -125,61 +136,77 @@ This is an example of how to list things you need to use the software and how to
    ./output
    ```
 
+## Recherche de solution
+
+### Manette
+
+Une approche similaire à celui d'une manette pourrait être intéressant. En effet la manette propose un joystick qui, grâce à l'orientation de celui nous donne une direction (haut, bas, gauche, droite).
+
+### Limites
+
+Cette méthode ne permet pas de contrôler la souris dans le noir (chose qu'on peut faire avec une "vraie" souris). Elle fonctionnera sûrement moins bien avec les personnes qui portent des lunettes (à cause des reflets) et encore moins qui portent des lunettes de soleil.
+
+Elle limite aussi la possiblité d'utilisation prolongée. Elle fatigue l'utilisateur qui l'utilise.
+
+Dans l'hypothèse que la personne qui utilise cette méthode ne puisse pas utiliser la souris "lambda" on peut également supposer qu'elle ne puisse pas utiliser le clavier. Est-ce utile pour un utilisateur d'avoir un ordinateur sans clavier ? Est-ce possible de trouver une alternative ?
+
+Pour les chiffres on pourrait éventuellement découper l'écran en 9 carrés et positionner la tête dans les carrés pour représenter un chiffre.
+
+### Pave tactile
+
+Il est possible d'implémenter quelque chose de similaire au pavé tactile. Cependant on utilisera plus l'orientation de la tête mais plutôt sa position dans un espace 2D.
+
 <!-- USAGE EXAMPLES -->
 
-## Usage
+## Calcul de l'orientation de la tête
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Pour le calcul de l'orientation de la tête j'ai utilisé 3 différentes techniques pour pouvoir les comparer entre elles.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Technique n°1
 
-<!-- ROADMAP -->
+Cette technique est très simple et basique. On récupère la position de la tête et on rajoute une ellipse (afin de montrer à l'utilisateur que la tête est bien détectée). On réalise la même chose pour les yeux.
 
-## Roadmap
+Une fois que ceci est fait on récupère la position de la tête sur l'axe x et y et on déplace la souris.
 
-See the [open issues](https://github.com/camillevingere/controle-souris-webcam/issues) for a list of proposed features (and known issues).
+La limite de cette technique se trouve dans la calibration du mouvement de la souris. En effet, il faut un déplacement de tête conséquent pour déplacer la souris d'un côté de l'écran à l'autre (c'est même impossible). De plus la souris n'est pas initialisée au centre de l'écran donc la souris se retrouve presque dans un des coins de l'écran.
 
-<!-- CONTRIBUTING -->
+### Technique n°2
 
-## Contributing
+Cette technique est plus élaborée et représentera mon rendu final.
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+1. Échantillonage
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Premièrement on récupère la position du visage sur 20 frames afin de déterminer un centre moyen de la tête sur l'écran. On retient ce centre moyen dans une variable globale qui ne changera plus. Une amélioration possible serait de pouvoir proposer à l'utilisateur un nouvel échantillonage du centre si celui-ci le souhaite.
 
-<!-- LICENSE -->
+2. Calcul de l'orientation gauche/droite
 
-## License
+On récupère une nouvelle frame. On récupère le centre du retangle représentant la position de la tête de l'utilisateur sur l'axe x. On le compare à notre centre moyen calculé précédemment.
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Si le centre moyen moins le centre actuel est supérieur à 0 alors la souris doit aller à gauche, sinon elle doit aller à droite.
+
+3. Calcul de l'orientation haut/bas
+
+Même chose sauf qu'on récupère pas le centre moyen et le centre du rectangle mais le centre du cercle de l'oeil.
+
+Cette partie ne fonctionne pas très bien. Il aurais fallut que je fasse également un centre moyen pour les yeux si je voulais utiliser la même technique.
+
+4. Calibration
+
+Cette fois on utilise une fonction calibration qui va adapter le déplacement de la souris proportionnellement au mouvement de la tête. On utilise juste un rapport de déplacement calculé avec la différence entre l'ancienne position et la nouvelle.
+
+### Technique n°3
+
+Cette technique est une technique récupérée directement sur internet. Cette technique utilise la position de l'iris des yeux pour effectuer tous les déplacements.
+
+Critique : Cette technique peut effectivement faire se déplacer la souris mais le calibrage doit être adapté. En effet, l'algorithme le plus intéressant est celui qui combinera précision et efficacité. Donc on privilégiera un algorithme qui ne demande pas trop d'énergie à l'utilisateur.
 
 <!-- CONTACT -->
 
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Camille Vingere - camille.vingere@gmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-<!-- ACKNOWLEDGEMENTS -->
-
-## Acknowledgements
-
-- [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-- [Img Shields](https://shields.io)
-- [Choose an Open Source License](https://choosealicense.com)
-- [GitHub Pages](https://pages.github.com)
-- [Animate.css](https://daneden.github.io/animate.css)
-- [Loaders.css](https://connoratherton.com/loaders)
-- [Slick Carousel](https://kenwheeler.github.io/slick)
-- [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-- [Sticky Kit](http://leafo.net/sticky-kit)
-- [JVectorMap](http://jvectormap.com)
-- [Font Awesome](https://fontawesome.com)
+Project Link: [https://github.com/camillevingere/controle-souris-webcam](https://github.com/camillevingere/controle-souris-webcam)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -188,9 +215,9 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 [contributors-url]: https://github.com/camillevingere/controle-souris-webcam/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/camillevingere/controle-souris-webcam.svg?style=for-the-badge
 [forks-url]: https://github.com/camillevingere/controle-souris-webcam/network/members
-[stars-shield]: https://img.shields.io/github/stars/camillevingere/controle-souris-webam.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/camillevingere/controle-souris-webcam.svg?style=for-the-badge
 [stars-url]: https://github.com/camillevingere/controle-souris-webcam/stargazers
-[issues-shield]: https://img.shields.io/github/issues/camille/controle-souris-webcam.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/camillevingere/controle-souris-webcam.svg?style=for-the-badge
 [issues-url]: https://github.com/camillevingere/controle-souris-webcam/issues
 [license-shield]: https://img.shields.io/github/license/camillevingere/controle-souris-webcam.svg?style=for-the-badge
 [license-url]: https://github.com/camillevingere/controle-souris-webcam/blob/master/LICENSE.txt

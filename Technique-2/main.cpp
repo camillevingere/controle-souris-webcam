@@ -55,7 +55,7 @@ int main(int, char **)
         Mat grImage;
         Mat resizeImage;
         namedWindow("face", 1);
-        int x1, x2, y1, y2;
+        int y1 = 0, y2 = 0;
         int gauche = 0, droite = 0, haut = 0, bas = 0;
         int centre = 0, moyenne_centre = 0, nombre_echantillon = 20;
 
@@ -119,21 +119,17 @@ int main(int, char **)
 
                         centre = ((face_i.size().height) / 2) + face_i.x;
 
-                        //Calcul de y'orientation de la tête haut et bas grâce aux échantillons
+                        //Calcul de l'orientation de la tête haut et bas grâce aux échantillons
                         //précédemment calculés
                         if (moyenne_centre - centre > 0)
                         {
-                                haut = (moyenne_centre - centre);
-                                bas = 0;
-                                if (haut > 30 || haut < 5)
-                                        haut = 0;
+                                gauche = (moyenne_centre - centre);
+                                droite = 0;
                         }
                         else
                         {
-                                haut = 0;
-                                bas = -(moyenne_centre - centre);
-                                if (bas > 30 || bas < 5)
-                                        bas = 0;
+                                gauche = 0;
+                                droite = -(moyenne_centre - centre);
                         }
 
                         Mat faceROI = grImage(faces[i]);
@@ -155,29 +151,23 @@ int main(int, char **)
 
                                 if (eyes[0].x < eyes[1].x)
                                 {
-                                        x1 = center.x;
                                         y1 = center.y;
                                 }
                                 else
                                 {
-                                        x2 = center.x;
                                         y2 = center.y;
                                 }
                         }
 
                         if (y2 - y1 > 0)
                         {
-                                droite = (y2 - y1);
-                                gauche = 0;
-                                if (droite > 30 || droite < 5)
-                                        droite = 0;
+                                haut = (y2 - y1);
+                                bas = 0;
                         }
                         else
                         {
-                                gauche = -(y2 - y1);
-                                droite = 0;
-                                if (gauche > 30 || gauche < 5)
-                                        gauche = 0;
+                                bas = -(y2 - y1);
+                                haut = 0;
                         }
 
                         printf("gauche: %d droite: %d haut: %d bas: %d\n", calibration(gauche, 5, 30, 5, width), calibration(droite, 5, 30, 5, width), calibration(haut, 5, 30, 5, height), calibration(bas, 5, 30, 5, height));
