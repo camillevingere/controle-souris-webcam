@@ -86,6 +86,8 @@
 
 ## Le projet
 
+[![Product Name Screen Shot][product-screenshot]](https://vingere.com)
+
 Polytech’Lille, SE4, IHM
 
 Le but de ce TP est de mettre en place une petite application permettant de
