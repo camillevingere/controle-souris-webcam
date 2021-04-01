@@ -66,17 +66,18 @@
       <ul>
         <li><a href="#manette">Manette</a></li>
         <li><a href="#limites">Limites</a></li>
-        <li><a href="#pave-tactile">Pavé tactile</a></li>
+        <li><a href="#pavé-tactile">Pavé tactile</a></li>
       </ul>
     </li>
             <li>
-      <a href="#calcul-de-l-orientation-de-la-tête">Calcul de l'orientation de la tête</a>
+      <a href="#calcul-de-l'orientation-de-la-tête">Calcul de l'orientation de la tête</a>
       <ul>
         <li><a href="#technique-n-1">Technique n°1</a></li>
         <li><a href="#technique-n-2">Technique n°2</a></li>
         <li><a href="#technique-n-2">Technique n°3</a></li>
       </ul>
     </li>
+    <li><a href="#difficultés">Difficultés</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -104,7 +105,7 @@ Ce projet a été réalisé avec les technologies suivantes
 
 Il est nécéssaire d'installer la bibliothèque d'OpenCV version 4.2.
 
-### Pré-requis
+### Prérequis
 
 Vous pouvez les installer comme ceci.
 
@@ -152,11 +153,9 @@ Dans l'hypothèse que la personne qui utilise cette méthode ne puisse pas utili
 
 Pour les chiffres on pourrait éventuellement découper l'écran en 9 carrés et positionner la tête dans les carrés pour représenter un chiffre.
 
-### Pave tactile
+### Pavé tactile
 
 Il est possible d'implémenter quelque chose de similaire au pavé tactile. Cependant on utilisera plus l'orientation de la tête mais plutôt sa position dans un espace 2D.
-
-<!-- USAGE EXAMPLES -->
 
 ## Calcul de l'orientation de la tête
 
@@ -200,13 +199,19 @@ Cette technique est une technique récupérée directement sur internet. Cette t
 
 Critique : Cette technique peut effectivement faire se déplacer la souris mais le calibrage doit être adapté. En effet, l'algorithme le plus intéressant est celui qui combinera précision et efficacité. Donc on privilégiera un algorithme qui ne demande pas trop d'énergie à l'utilisateur.
 
+## Difficultés
+
+Les principales difficultés rencontrées sont avant tout les étapes d'installations. En effet, n'ayant pas tous le même système d'exploitation, il était compliqué de trouver une solution universelle. Pour ma part j'ai mis seulement 3H à installer tout le nécessaire pour faire fonctionner le projet. Certains de mes camarades ont mis plus de 8H.
+
+Une autre difficulté relative au projet a été la calibration du déplacement de la souris. Il a été réellement difficile de trouver le bon rapport pour la déplacer convenablement pour que ce soit le plus confortable possible pour l'utilisateur. Cependant il était facile de trouver sur internet un algorithme d'analyse faciale avec l'algorithme dit de viola-jones.
+
 <!-- CONTACT -->
 
 ## Contact
 
 Camille Vingere - camille.vingere@gmail.com
 
-Project Link: [https://github.com/camillevingere/controle-souris-webcam](https://github.com/camillevingere/controle-souris-webcam)
+Lien du projet: [https://github.com/camillevingere/controle-souris-webcam](https://github.com/camillevingere/controle-souris-webcam)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
